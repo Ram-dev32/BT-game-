@@ -1,0 +1,46 @@
+body{
+  background:#0b3d2e;
+  color:#fff;
+  font-family:Arial;
+  text-align:center;
+}
+
+.top,.wallets,.controls{margin:6px}
+
+.table{
+  width:320px;height:320px;margin:10px auto;
+  background:#145a32;border-radius:50%;position:relative;
+}
+
+.player{position:absolute;text-align:center;font-size:14px}
+
+.card{
+  width:40px;height:60px;background:#fff;color:#000;
+  border-radius:6px;display:inline-flex;
+  align-items:center;justify-content:center;
+  margin:2px;font-weight:bold;
+}
+
+.system{position:absolute;top:120px;left:120px}
+.systemCard{background:gold}
+
+.p0{top:-10px;left:120px}
+.p1{right:-10px;top:120px}
+.p2{bottom:-10px;left:120px}
+.p3{left:-10px;top:120px}
+.p4{top:20px;right:40px}
+.p5{bottom:20px;right:40px}
+.p6{bottom:20px;left:40px}
+.p7{top:20px;left:40px}
+
+@keyframes blink{
+  0%{box-shadow:0 0 5px gold}
+  50%{box-shadow:0 0 20px gold}
+  100%{box-shadow:0 0 5px gold}
+}
+.active-player{
+  animation:blink 1s infinite;
+  border:2px solid gold;border-radius:8px;
+}
+
+#status{margin-top:8px;font-weight:bold}
