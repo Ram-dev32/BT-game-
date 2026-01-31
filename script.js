@@ -129,3 +129,53 @@ function addGameWallet(){
 }
 
 setPlayers();
+// ==== WEBRTC START ====
+let pc, channel;
+const config = {
+  iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+};
+
+function hostGame() {
+  pc = new RTCPeerConnection(config);
+  channel = pc.createDataChannel("game");
+
+  channel.onopen = () => alert("Connected 🎉");
+  channel.onmessage = e => console.log("MSG:", e.data);
+
+  pc.onicecandidate = e => {
+    if (e.candidate) console.log(JSON.stringify(e.candidate));
+  };
+
+  pc.createOffer().then(o => {
+    pc.setLocalDescription(o);
+    setTimeout(() => {
+      prompt("Copy OFFER", JSON.stringify(pc.localDescription));
+    }, 500);
+  });
+}
+
+function joinGame() {
+  pc = new RTCPeerConnection(config);
+
+  pc.ondatachannel = e => {
+    channel = e.channel;
+    channel.onopen = () => alert("Connected 🎉");
+    channel.onmessage = ev => console.log("MSG:", ev.data);
+  };
+
+  let offer = prompt("Paste OFFER");
+  pc.setRemoteDescription(JSON.parse(offer));
+
+  pc.createAnswer().then(a => {
+    pc.setLocalDescription(a);
+    setTimeout(() => {
+      prompt("Send ANSWER", JSON.stringify(pc.localDescription));
+    }, 500);
+  });
+}
+
+function acceptAnswer() {
+  let ans = prompt("Paste ANSWER");
+  pc.setRemoteDescription(JSON.parse(ans));
+}
+// ==== WEBRTC END ====
