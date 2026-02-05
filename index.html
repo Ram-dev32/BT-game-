@@ -1,5 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html> <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyCjjuCQ5szKeCaR1DRoaNuQGNL0nljeV3U",
+    authDomain: "bt-game-21a9d.firebaseapp.com",
+    databaseURL: "https://bt-game-21a9d-default-rtdb.firebaseio.com",
+    projectId: "bt-game-21a9d",
+    storageBucket: "bt-game-21a9d.firebasestorage.app",
+    messagingSenderId: "664544262009",
+    appId: "1:664544262009:web:cee190b34c2d5ee646a1a8",
+    measurementId: "G-S435GP417F"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
 <head>
   <title>Between Game</title>
   <link rel="stylesheet" href="style.css">
