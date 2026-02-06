@@ -2,90 +2,96 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>BETWEEN GAME</title>
-
+  <title>Between Online Game</title>
   <style>
-    body {
-      background:#0b3d2e;
-      color:white;
-      font-family:Arial;
-      text-align:center;
-    }
-    button,input,select {
-      padding:6px;
-      margin:4px;
-    }
+    body { font-family: Arial; text-align: center; background:#111; color:#fff; }
+    input, button { padding:10px; margin:5px; font-size:16px; }
+    #game { display:none; margin-top:20px; }
   </style>
 </head>
-
 <body>
 
-<h2>BETWEEN GAME</h2>
+<h2>Between Online Game</h2>
 
-<input id="roomId" placeholder="Enter Room ID">
-<button onclick="hostGame()">Host</button>
-<button onclick="joinGame()">Join</button>
+<div id="lobby">
+  <input id="roomId" placeholder="Room ID" />
+  <br>
+  <button onclick="createRoom()">Host</button>
+  <button onclick="joinRoom()">Join</button>
+</div>
 
-<p id="status">WAITING...</p>
+<div id="game">
+  <h3 id="status">Waiting...</h3>
+  <button onclick="playGame()">PLAY</button>
+  <h1 id="result"></h1>
+</div>
 
-<hr>
-
-<button onclick="play()">PLAY</button>
-
-<!-- 🔥 FIREBASE + GAME LOGIC -->
+<!-- Firebase -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-/* 🔴 YOUR FIREBASE DETAILS */
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "bt-game-21a9d.firebaseapp.com",
-  databaseURL: "https://bt-game-21a9d-default-rtdb.firebaseio.com",
-  projectId: "bt-game-21a9d",
-  storageBucket: "bt-game-21a9d.appspot.com",
-  messagingSenderId: "YOUR_ID",
-  appId: "YOUR_APP_ID"
-};
+  // 🔴 YOUR FIREBASE CONFIG HERE
+  const firebaseConfig = {
+    apiKey: "YOUR_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+    projectId: "YOUR_PROJECT",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "XXXX",
+    appId: "XXXX"
+  };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
 
-let room = "";
+  let room = "";
+  let isHost = false;
 
-/* HOST */
-window.hostGame = function () {
-  room = document.getElementById("roomId").value || "room1";
-  set(ref(db, "rooms/" + room), {
-    host: true,
-    joined: false
-  });
-  document.getElementById("status").innerText = "HOST CREATED";
-};
+  window.createRoom = function () {
+    room = document.getElementById("roomId").value;
+    if (!room) return alert("Room ID ivu");
+    isHost = true;
+    set(ref(db, "rooms/" + room), {
+      status: "waiting"
+    });
+    startListen();
+  }
 
-/* JOIN */
-window.joinGame = function () {
-  room = document.getElementById("roomId").value || "room1";
-  set(ref(db, "rooms/" + room + "/joined"), true);
-  document.getElementById("status").innerText = "JOINED ROOM";
-};
+  window.joinRoom = function () {
+    room = document.getElementById("roomId").value;
+    if (!room) return alert("Room ID ivu");
+    isHost = false;
+    startListen();
+  }
 
-/* PLAY */
-window.play = function () {
-  if (!room) return alert("Host or Join first");
-  set(ref(db, "rooms/" + room + "/play"), Math.floor(Math.random()*100));
-};
+  function startListen() {
+    document.getElementById("lobby").style.display = "none";
+    document.getElementById("game").style.display = "block";
 
-/* LISTEN */
-function listen() {
-  if (!room) return;
-  onValue(ref(db, "rooms/" + room), snap => {
-    document.getElementById("status").innerText =
-      JSON.stringify(snap.val());
-  });
-}
+    onValue(ref(db, "rooms/" + room), (snap) => {
+      const data = snap.val();
+      if (!data) return;
 
-setInterval(listen,1000);
+      if (data.result) {
+        document.getElementById("result").innerText = data.result;
+        document.getElementById("status").innerText = "Game Played";
+      } else {
+        document.getElementById("status").innerText = "Ready to Play";
+      }
+    });
+  }
+
+  window.playGame = function () {
+    if (!isHost) {
+      alert("Only HOST play cheyali");
+      return;
+    }
+    const num = Math.floor(Math.random() * 100) + 1;
+    set(ref(db, "rooms/" + room), {
+      result: "Number: " + num
+    });
+  }
 </script>
 
 </body>
