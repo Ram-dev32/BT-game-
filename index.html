@@ -1,84 +1,43 @@
 <!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>BETWEEN GAME</title>
 
+  <style>
+    body {
+      background:#0b3d2e;
+      color:white;
+      font-family:Arial;
+      text-align:center;
+    }
+    button,input,select {
+      padding:6px;
+      margin:4px;
+    }
+  </style>
 </head>
+
 <body>
 
-<h2>🎴 BETWEEN GAME</h2>
+<h2>BETWEEN GAME</h2>
 
-<!-- ROOM CONTROLS (ADD HERE EXACTLY) -->
-<div class="controls">
-  <input id="roomId" placeholder="Enter Room ID" />
-  <button onclick="createRoom()">Host</button>
-  <button onclick="joinRoom()">Join</button>
-</div>
+<input id="roomId" placeholder="Enter Room ID">
+<button onclick="hostGame()">Host</button>
+<button onclick="joinGame()">Join</button>
 
-<div class="info">
+<p id="status">WAITING...</p>
 
-<div class="top">
-  Turn: <span id="turnPlayer">1</span> |
-  ⏱ <span id="time">45</span>s
-</div>
+<hr>
 
-<div class="wallets">
-  👛 My: ₹<span id="myWallet">0</span> |
-  🎮 Game: ₹<span id="gameWallet">0</span> |
-  🏦 House: ₹<span id="houseWallet">0</span>
-</div>
+<button onclick="play()">PLAY</button>
 
-<div class="controls">
-  Players:
-  <select id="playerCount" onchange="setPlayers()">
-    <option>1</option><option>2</option><option>3</option>
-    <option selected>4</option>
-    <option>5</option><option>6</option><option>7</option><option>8</option>
-  </select>
-</div>
-
-<div class="controls">
-  Name <input id="playerName" placeholder="Name">
-  Avatar
-  <select id="playerAvatar">
-    <option>😀</option><option>😎</option><option>🔥</option>
-    <option>👑</option><option>🎮</option>
-  </select>
-  <button onclick="savePlayer()">SAVE</button>
-</div>
-
-<div class="table">
-  <div class="player p0"></div>
-  <div class="player p1"></div>
-  <div class="player p2"></div>
-  <div class="player p3"></div>
-  <div class="player p4"></div>
-  <div class="player p5"></div>
-  <div class="player p6"></div>
-  <div class="player p7"></div>
-
-  <div class="system">
-    SYSTEM
-    <div class="card systemCard" id="sys">?</div>
-  </div>
-</div>
-
-<div class="controls">
-  Bet <input type="number" id="bet" value="10" min="1">
-  <button id="playBtn" onclick="play()">PLAY</button>
-  <button onclick="drop()">DROP</button>
-</div>
-
-<div class="controls">
-  Add My <input id="addMy" type="number" value="100">
-  <button onclick="addMyWallet()">ADD</button>
-  Add Game <input id="addGame" type="number" value="20">
-  <button onclick="addGameWallet()">ADD</button>
-</div>
-
-<div id="status">WAITING…</div>
-  <html> <script type="module">
-  <script type="module">
+<!-- 🔥 FIREBASE + GAME LOGIC -->
+<script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
+/* 🔴 YOUR FIREBASE DETAILS */
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "bt-game-21a9d.firebaseapp.com",
@@ -92,20 +51,42 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+let room = "";
+
+/* HOST */
 window.hostGame = function () {
-  set(ref(db, "test/host"), "ok");
-  alert("HOST OK");
+  room = document.getElementById("roomId").value || "room1";
+  set(ref(db, "rooms/" + room), {
+    host: true,
+    joined: false
+  });
+  document.getElementById("status").innerText = "HOST CREATED";
 };
 
+/* JOIN */
 window.joinGame = function () {
-  set(ref(db, "test/player"), "ok");
-  alert("JOIN OK");
+  room = document.getElementById("roomId").value || "room1";
+  set(ref(db, "rooms/" + room + "/joined"), true);
+  document.getElementById("status").innerText = "JOINED ROOM";
 };
-  </script>
 
-<script src="script.js"></script>
+/* PLAY */
+window.play = function () {
+  if (!room) return alert("Host or Join first");
+  set(ref(db, "rooms/" + room + "/play"), Math.floor(Math.random()*100));
+};
+
+/* LISTEN */
+function listen() {
+  if (!room) return;
+  onValue(ref(db, "rooms/" + room), snap => {
+    document.getElementById("status").innerText =
+      JSON.stringify(snap.val());
+  });
+}
+
+setInterval(listen,1000);
+</script>
+
 </body>
 </html>
-<button onclick="hostGame()">HOST</button>
-<button onclick="joinGame()">JOIN</button>
-<button onclick="acceptAnswer()">ACCEPT</button>
