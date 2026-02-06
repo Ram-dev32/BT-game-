@@ -1,98 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Between Online Game</title>
-  <style>
-    body { font-family: Arial; text-align: center; background:#111; color:#fff; }
-    input, button { padding:10px; margin:5px; font-size:16px; }
-    #game { display:none; margin-top:20px; }
-  </style>
+  <title>Between Online</title>
 </head>
 <body>
 
 <h2>Between Online Game</h2>
 
-<div id="lobby">
-  <input id="roomId" placeholder="Room ID" />
-  <br>
-  <button onclick="createRoom()">Host</button>
-  <button onclick="joinRoom()">Join</button>
-</div>
+<input id="roomId" placeholder="Room ID">
+<button onclick="host()">HOST</button>
+<button onclick="join()">JOIN</button>
 
-<div id="game">
-  <h3 id="status">Waiting...</h3>
-  <button onclick="playGame()">PLAY</button>
-  <h1 id="result"></h1>
-</div>
+<h3 id="status">Not connected</h3>
+<h1 id="number"></h1>
 
-<!-- Firebase -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+<button onclick="play()">PLAY (HOST)</button>
 
-  // 🔴 YOUR FIREBASE CONFIG HERE
-  const firebaseConfig = {
-    apiKey: "YOUR_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-    projectId: "YOUR_PROJECT",
-    storageBucket: "YOUR_PROJECT.appspot.com",
-    messagingSenderId: "XXXX",
-    appId: "XXXX"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-
-  let room = "";
-  let isHost = false;
-
-  window.createRoom = function () {
-    room = document.getElementById("roomId").value;
-    if (!room) return alert("Room ID ivu");
-    isHost = true;
-    set(ref(db, "rooms/" + room), {
-      status: "waiting"
-    });
-    startListen();
-  }
-
-  window.joinRoom = function () {
-    room = document.getElementById("roomId").value;
-    if (!room) return alert("Room ID ivu");
-    isHost = false;
-    startListen();
-  }
-
-  function startListen() {
-    document.getElementById("lobby").style.display = "none";
-    document.getElementById("game").style.display = "block";
-
-    onValue(ref(db, "rooms/" + room), (snap) => {
-      const data = snap.val();
-      if (!data) return;
-
-      if (data.result) {
-        document.getElementById("result").innerText = data.result;
-        document.getElementById("status").innerText = "Game Played";
-      } else {
-        document.getElementById("status").innerText = "Ready to Play";
-      }
-    });
-  }
-
-  window.playGame = function () {
-    if (!isHost) {
-      alert("Only HOST play cheyali");
-      return;
-    }
-    const num = Math.floor(Math.random() * 100) + 1;
-    set(ref(db, "rooms/" + room), {
-      result: "Number: " + num
-    });
-  }
-</script>
-
+<script type="module" src="script.js"></script>
 </body>
 </html>
