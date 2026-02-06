@@ -1,32 +1,5 @@
 <!DOCTYPE html>
-<html> <script type="module">
-  <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "bt-game-21a9d.firebaseapp.com",
-  databaseURL: "https://bt-game-21a9d-default-rtdb.firebaseio.com",
-  projectId: "bt-game-21a9d",
-  storageBucket: "bt-game-21a9d.appspot.com",
-  messagingSenderId: "YOUR_ID",
-  appId: "YOUR_APP_ID"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-window.hostGame = function () {
-  set(ref(db, "test/host"), "ok");
-  alert("HOST OK");
-};
-
-window.joinGame = function () {
-  set(ref(db, "test/player"), "ok");
-  alert("JOIN OK");
-};
-</script>
 </head>
 <body>
 
@@ -101,6 +74,34 @@ window.joinGame = function () {
 </div>
 
 <div id="status">WAITING…</div>
+  <html> <script type="module">
+  <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "bt-game-21a9d.firebaseapp.com",
+  databaseURL: "https://bt-game-21a9d-default-rtdb.firebaseio.com",
+  projectId: "bt-game-21a9d",
+  storageBucket: "bt-game-21a9d.appspot.com",
+  messagingSenderId: "YOUR_ID",
+  appId: "YOUR_APP_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+window.hostGame = function () {
+  set(ref(db, "test/host"), "ok");
+  alert("HOST OK");
+};
+
+window.joinGame = function () {
+  set(ref(db, "test/player"), "ok");
+  alert("JOIN OK");
+};
+  </script>
 
 <script src="script.js"></script>
 </body>
